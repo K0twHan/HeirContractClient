@@ -1,0 +1,1 @@
+Heir kontratı sadece tek bir token ile işlem yapabildiği için birden fazla sözleşme deploy ediliyor onun dışında ERC-20 tokenleri ile çalışabildiği gösterilmek için kendi deploy etmediğimiz usdc ile de çalışmakta
