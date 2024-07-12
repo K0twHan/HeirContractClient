@@ -1,4 +1,4 @@
-//import edilenler
+//import edilen kütüphaneler
 const readline = require('readline');
 
 
@@ -11,14 +11,14 @@ const { sign } = require('crypto');
 //
 
 //
-
+// input alabilmek için readline kullanıldı
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
   });
 
 
-
+//input almak için fonksiyon
   function askQuestion(query) {
     return new Promise(resolve => rl.question(query, resolve));
   }
@@ -27,13 +27,6 @@ const rl = readline.createInterface({
 //tanımlamalar
 
 const provider = new ethers.JsonRpcProvider("https://sepolia-rollup.arbitrum.io/rpc")
-
-
-
-const mirasalanwallet = new Wallet(mirasalan_pk, provider)
-const mirasalansigner = mirasalanwallet.connect(provider)
-//const wallet = new Wallet(mirasci_pk, provider)
-//const signer = wallet.connect(provider)
 const heirContractAddress = "0x85c1421F4a8e0ac44457976605a1c9Acbdd23426"
 const tokenContractAddress = "0xaD3c6360B988e9716bbae9687f48b230F4F6e66A"
 //
@@ -89,9 +82,9 @@ const usdcabi = [
         "type": "function"
     }
 ]
-
+//usdc için contratla iletişime geçecek olan fonksiyon
 async function getUSDCContract(private_Key,public_key,amount){
-    console.log("USDC İŞLEMLERİ")
+
     const wallet = new Wallet(private_Key, provider)
     const signer = wallet.connect(provider)
     const usdctokenContract = new ethers.Contract(usdcContractAddress, usdcabi, signer);
@@ -99,21 +92,23 @@ async function getUSDCContract(private_Key,public_key,amount){
     await usdcTokenOperations(signer,usdcheirContract,usdctokenContract,amount,public_key);
 
 }
+//usdc tokeni ile işlem yapan fonksiyon
 async function usdcTokenOperations(signer,usdcheirContract,usdctokenContract,amount,public_key){
-    console.log("TOKEN işlemleri")
+   
     //await tokenContract.approve(heirContractAddress,"5000000").then((allowance) => {console.log(allowance)})
-    console.log("burda mı sorun approve")
+   
    await usdctokenContract.approve(usdtheirAddress, amount+"000000").then((tx) => {console.log(tx)})
     await usdctokenContract.allowance(signer,usdcContractAddress).then((allowance) => {console.log(allowance)})
-    console.log("burda mı sorun allowance")
+   
    //await  tokenContract.balanceOf(signer.address).then((balance) => {console.log(balance)})
    await  usdcheirContract.inheritances(signer.address).then((balance) => {console.log(balance)})  
-    console.log("burda mı sorun inheritance")
+    
    await  usdcheirContract.setHeir(public_key,amount+"000000").then((tx) => {console.log(tx)})
-   console.log("burda mı sorun")
+   
    //await heirContract.setHeir(public_key,"5000000").then((tx) => {console.log(tx)})
 }
 
+//usdc tokeni ile miras almak için fonksiyon
 async function getUSDCHeirContract(private_Key,public_key,amount){
     const wallet = new Wallet(private_Key, provider)
     const signer = wallet.connect(provider)
@@ -121,14 +116,14 @@ async function getUSDCHeirContract(private_Key,public_key,amount){
     await usdcclaimInheritance(public_key,usdcheirContract,amount);
 
 }
-
+//test tokeni ile miras almak için fonksiyon
 async function getHeirContract(private_Key,public_key,amount){
 const wallet = new Wallet(private_Key, provider)
 const signer = wallet.connect(provider)
 const heirContract = new ethers.Contract(heirContractAddress, heirabi, signer);
 await claimInheritance(public_key,heirContract,amount);
 }
-
+//test tokeni kontratlarına bağlanma fonksiyonu
 async function connectContracts(private_Key,amount,public_key) {
 //kontratlara bağlanma
 const wallet = new Wallet(private_Key, provider)
@@ -136,26 +131,24 @@ const signer = wallet.connect(provider)
 const tokenContract = new ethers.Contract(tokenContractAddress, tokenabi, signer);
 const heirContract = new ethers.Contract(heirContractAddress, heirabi, signer);
 await tokenOperations(signer,heirContract,tokenContract,amount,public_key);
-//const mirasalancontract = new ethers.Contract(heirContractAddress, heirabi, mirasalansigner);
 }
 
-//token işlemleri
+//test tokeni ile işlem yapan fonksiyon
 async function tokenOperations(signer,heirContract,tokenContract,amount,public_key){
-    console.log("TOKEN işlemleri")
-    //await tokenContract.approve(heirContractAddress,"5000000").then((allowance) => {console.log(allowance)})
-    console.log("burda mı sorun approve")
+   
+   
    await tokenContract.approve(heirContractAddress, parseEther(amount)).then((tx) => {console.log(tx)})
     await tokenContract.allowance(signer,heirContractAddress).then((allowance) => {console.log(allowance)})
-    console.log("burda mı sorun allowance")
+   
    await  tokenContract.balanceOf(signer.address).then((balance) => {console.log(balance)})
    await  heirContract.inheritances(signer.address).then((balance) => {console.log(balance)})  
-    console.log("burda mı sorun inheritance")
+   
    await  heirContract.setHeir(public_key,parseEther(amount)).then((tx) => {console.log(tx)})
-   console.log("burda mı sorun")
-   //await heirContract.setHeir(public_key,"5000000").then((tx) => {console.log(tx)})
+   
+
     
 }
-
+//mirası almak için fonksiyon
 async function claimInheritance(public_key,heirContract,amount){
 
 await heirContract.claimInheritance(public_key,parseEther(amount)).then((tx) => {console.log(tx)})
@@ -168,13 +161,6 @@ async function usdcclaimInheritance(public_key,usdcheirContract,amount){
 
 
 
-//heir işlemleri
-//heirContract.setHeir(mirasalan,parseEther("1000")).then((tx) => {console.log(tx)})
-//heirContract.claimInheritance(wallet.address,parseEther("1000")).then((tx) => {console.log(tx)})
-//mirasalancontract.claimInheritance(signer.address,parseEther("1000")).then((balance) => {console.log(balance)})
-
-//heirContract.inheritances(wallet.address).then((balance) => {console.log(balance)})
-//heirContract.setHeir(signer,parseEther("0.000000000002")).then((tx) => {console.log(tx)})
 
 
 async function main() {
@@ -192,7 +178,7 @@ if(option == 1){
     rl.close();
     await connectContracts(private_key,amount,public_key);
     console.log("Miras Bırakılıyor...\n")
-    console.log(option,token,amount,private_key)
+    
 
 }
 else if (token == 2){
@@ -205,7 +191,7 @@ else if (token == 2){
         rl.close();
         await getUSDCContract(private_key,public_key,amount);
         console.log("Miras Bırakılıyor...\n")
-        console.log(option,token,amount,private_key)
+        
     }
     }
 
